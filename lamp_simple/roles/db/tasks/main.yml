@@ -7,9 +7,9 @@
       state: latest
     loop:
      - mariadb
-     - httpd
      - mariadb-server
-     - php 
+     - mysql-connector-python
+     - mysql_secure_installation
     when: ansible_os_family == "RedHat"   
 
   - name: Configure SELinux to start mysql on any port
