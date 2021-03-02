@@ -1,7 +1,7 @@
 [webservers]
-web3
+centos1 ansible_host=192.168.56.101
 
 [dbservers]
-web2
+ubuntu1 ansible_host=192.168.56.102
 
 

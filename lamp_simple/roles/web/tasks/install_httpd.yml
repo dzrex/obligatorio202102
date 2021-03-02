@@ -12,6 +12,7 @@
    - git
    - libsemanage-python
    - libselinux-python
+  when: ansible_os_family == "RedHat"
 
 - name: insert iptables rule for httpd
   lineinfile:
