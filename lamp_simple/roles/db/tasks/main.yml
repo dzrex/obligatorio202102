@@ -7,10 +7,7 @@
       state: latest
     loop:
      - mariadb
-     - mariadb-server
-     - mysql-connector-python
-     - mysql_secure_installation
-    when: ansible_os_family == "RedHat"   
+     - mariadb-server   
 
   - name: Configure SELinux to start mysql on any port
     seboolean:
@@ -24,7 +21,7 @@
       src: my.cnf.j2
       dest: /etc/my.cnf
     notify:
-    - restart mysql
+    - restart mariadb
 
   - name: Start Mariadb Service
     service:

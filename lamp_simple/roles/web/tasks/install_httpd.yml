@@ -1,18 +1,27 @@
 ---
 # These tasks install http and the php modules.
 
-- name: Install http and php etc
+- name: Install http and php centos
   yum:
     name: "{{ item }}"
-    state: present
-  with_items:
+    state: latest
+  loop:
    - httpd
    - php
-   - php-mysql
    - git
-   - libsemanage-python
-   - libselinux-python
+   - python3-libsemanage
+   - python3-libselinux
   when: ansible_os_family == "RedHat"
+
+- name: Install http and php ubuntu
+  apt:  
+    name: "{{ item }}"
+    state: latest
+  loop:
+   - apache2
+   - php
+   - git   
+  when: ansible_os_family == "Debian"
 
 - name: insert iptables rule for httpd
   lineinfile:
@@ -24,11 +33,19 @@
     line: "-A INPUT -p tcp  --dport {{ httpd_port }} -j  ACCEPT"
   notify: restart iptables
 
-- name: http service state
+- name: http service state centos
   service:
     name: httpd
     state: started
     enabled: yes
+  when: ansible_os_family == "RedHat"
+
+- name: http service state ubuntu
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+  when: ansible_os_family == "Debian"
 
 - name: Configure SELinux to allow httpd to connect to remote database
   seboolean:
