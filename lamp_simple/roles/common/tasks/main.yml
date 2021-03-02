@@ -1,25 +1,43 @@
 ---
 # This playbook contains common plays that will be run on all nodes.
 
-- name: Install ntp
-  yum:
-    name: ntp
+- name: Install ntp ubuntu
+  apt:
+    name: ntpdate
     state: present
   tags: ntp
+  when: ansible_os_family == "Debian"
+
+- name: Install chrony centos
+  yum:
+    name: chrony
+    state: present
+  tags: ntp
+  when: ansible_os_family == "RedHat"
 
 - name: Configure ntp file
   template:
     src: ntp.conf.j2
     dest: /etc/ntp.conf
-  tags: ntp
-  notify: restart ntp
+  tags: ntpd
+  notify: restart ntpd
+  when: ansible_os_family == "Debian"
 
-- name: Start the ntp service
+- name: Start the ntpd service ubuntu
   service:
-    name: ntpd
+    name: ntp
     state: started
     enabled: yes
-  tags: ntp
+  tags: ntpd
+  when: ansible_os_family == "Debian"
+
+- name: Start the crony service centos
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+  tags: chronyd
+  when: ansible_os_family == "RedHat"
 
 - name: test to see if selinux is running
   command: getenforce
